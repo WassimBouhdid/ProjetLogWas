@@ -1,4 +1,3 @@
-
 class GameState:
 
     def __init__(self):
@@ -53,10 +52,7 @@ class GameState:
             print()
 
 
-
-
 def main():
-
     gs = GameState()
     q = ''
 
@@ -66,7 +62,8 @@ def main():
 
     while gs.pieceshumain != 0:
         while gs.nbrknights != 0:
-            placement = input('ou voulez vous placer vos placer vos chevaliers ? ( {} restant(s))'.format(gs.nbrknights))
+            placement = input(
+                'ou voulez vous placer vos placer vos chevaliers ? ( {} restant(s))'.format(gs.nbrknights))
             gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.knightsnotation
             gs.nbrknights -= 1
             gs.pieceshumain -= 1
@@ -85,7 +82,6 @@ def main():
             gs.nbrcata -= 1
             gs.pieceshumain -= 1
             gs.drawboard()
-
 
     print('c\'est maintenant à l\'équipe des orcs de déposer ses pièces sur le champ de bataille')
 
@@ -139,7 +135,8 @@ def main():
         else:
             deplacement = input('ou voullez vous déplacer la pièce choisis ?')
 
-            gs.board[gs.hor.index(deplacement[0])][gs.ver.index(deplacement[1:])] = gs.board[gs.hor.index(pos[0])][gs.ver.index(pos[1:])]
+            gs.board[gs.hor.index(deplacement[0])][gs.ver.index(deplacement[1:])] = gs.board[gs.hor.index(pos[0])][
+                gs.ver.index(pos[1:])]
 
             gs.board[gs.hor.index(pos[0])][gs.ver.index(pos[1:])] = '--'
 
@@ -153,12 +150,10 @@ def main():
 
 
 def affichage_legende():
-
     print()
 
 
 if __name__ == "__main__":
-
     affichage_legende()
 
     main()
