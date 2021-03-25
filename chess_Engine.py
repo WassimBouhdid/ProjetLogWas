@@ -1,15 +1,9 @@
 import pygame as p
-import os
 import argparse
 from Army_class import Army
 from Humans_class import humains
 from Orcs_class import Orcs
-
-a = Army()
-h = humains()
-o = Orcs()
-
-p.init()
+from Party_class import partie
 
 
 class Board:
@@ -44,8 +38,15 @@ class Board:
         self.running = ''
         self.fen = p.display.set_mode((self.larg, self.haut))
 
-    def get_Board(self):
+
+    def get_board(self):
         return self.__plateau
+
+    def drawboard(self):
+        for i in range(12):
+            for x in range(12):
+                print(Board.get_board()[i][x], end='  ')
+            print()
 
     def get_hor(self):
         return self.__hor
@@ -114,6 +115,11 @@ class Board:
 
 
 if __name__ == "__main__":
+    a = Army()
+    h = humains()
+    o = Orcs()
+    p.init()
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-cl", "--commandlign", action="lance le jeu en ligne de commande")
     parser.add_argument("-i", "--interface", action="lance l'interface de jeu")
@@ -126,59 +132,48 @@ if __name__ == "__main__":
 
             print('l\'équipe des humains commence à déposer ses pièces')
 
-            while a.equipehumain != 0:
-                while h.get_nbrknights != 0:
+            for v in range(1, a.get_nbrhuman):
+                for x in range(1, h.get_nbrknights):
                     placement = input(
-                        'ou voulez vous placer vos placer vos chevaliers ? ( {} restant(s))'.format(h.get_nbrknights))
+                        'ou voulez vous placer vos placer vos chevaliers ? ( {} restant(s))'.format(h.get_nbrknights-x))
                     Board.get_Board()[Board.get_hor().index(placement[0])][Board.get_vert().index(placement[1:])] = \
-                    h.get_nota()[0]
+                        h.get_nota()[0]
 
                     h.kill_arch()
-                    gs.nbrknights -= 1
-                    gs.pieceshumain -= 1
-                    gs.drawboard()
+                    Board.drawboard()
 
-                while gs.nbrarchers != 0:
+                for y in range(1, h.get_nbrarch):
                     placement = input(
-                        'ou voulez vous placer vos placer vos archers ? ( {} restant(s))'.format(gs.nbrarchers))
-                    gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.achersnotation
-                    gs.nbrarchers -= 1
-                    gs.pieceshumain -= 1
-                    gs.drawboard()
+                        'ou voulez vous placer vos placer vos archers ? ( {} restant(s))'.format(h.get_nbrarch-y))
+                    Board.get_Board()[Board.hor.index(placement[0])][
+                        Board.ver.index(placement[1:])] = Board.achersnotation
+                    Board.drawboard()
 
-                while gs.nbrcata != 0:
+                for z in range(1, h.get_nbrcata):
                     placement = input(
-                        'ou voulez vous placer vos placer vos catapultes ? ( {} restant(s))'.format(gs.nbrcata))
+                        'ou voulez vous placer vos placer vos catapultes ? ( {} restant(s))'.format(gs.nbrcata-z))
                     gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.catanotation
-                    gs.nbrcata -= 1
-                    gs.pieceshumain -= 1
-                    gs.drawboard()
+                    Board.drawboard()
 
             print('c\'est maintenant à l\'équipe des orcs de déposer ses pièces sur le champ de bataille')
 
-            while gs.piecesorcs != 0:
-                while gs.nbrorcs != 0:
-                    placement = input('ou voulez vous placer vos placer vos orcs ? ( {} restant(s))'.format(gs.nbrorcs))
+            for v in range(1, h.get_nbrcata):
+                for x in range(1, h.get_nbrcata):
+                    placement = input('ou voulez vous placer vos placer vos orcs ? ( {} restant(s))'.format(gs.nbrorcs-x))
                     gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.orcsnotation
-                    gs.nbrorcs -= 1
-                    gs.piecesorcs -= 1
-                    gs.drawboard()
+                    Board.drawboard()
 
-                while gs.nbrmages != 0:
+                for y in range(1, h.get_nbrcata):
                     placement = input(
-                        'ou voulez vous placer vos placer vos mages ? ( {} restant(s))'.format(gs.nbrmages))
+                        'ou voulez vous placer vos placer vos mages ? ( {} restant(s))'.format(gs.nbrmages-y))
                     gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.magesnotation
-                    gs.nbrmages -= 1
-                    gs.piecesorcs -= 1
-                    gs.drawboard()
+                    Board.drawboard()
 
-                while gs.nbrdrakes != 0:
+                for z in range(1, h.get_nbrcata):
                     placement = input(
-                        'ou voulez vous placer vos placer vos dragons ? ( {} restant(s))'.format(gs.nbrdrakes))
+                        'ou voulez vous placer vos placer vos dragons ? ( {} restant(s))'.format(gs.nbrdrakes-z))
                     gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.drakesnotation
-                    gs.nbrdrakes -= 1
-                    gs.piecesorcs -= 1
-                    gs.drawboard()
+                    Board.drawboard()
 
             print(
                 'maintenant que toute les pièces que chaqu\'une des équipes sont placées le combat peut enfin commencé')
@@ -222,6 +217,6 @@ if __name__ == "__main__":
                         q = 'quit'
 
             print('partie terminé')
-    else:
-        pl = Plateau()
-        pl.lancement(pl.plateau)
+    elif (args.interface):
+        B = Board()
+        B.lancement(B.get_Board())
