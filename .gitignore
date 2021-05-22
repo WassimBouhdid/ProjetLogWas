@@ -2,3 +2,4 @@
 venv/
 .idea/
 __pygame__/
+__pycache__
