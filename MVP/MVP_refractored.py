@@ -49,7 +49,7 @@ class GameState:
     def draw_board(self):
         for i in range(12):
             for x in range(12):
-                print(GameState.get_board(self)[i][x], end='  ')
+                print(GameState.board[i][x], end='  ')
             print()
 
 
@@ -67,21 +67,21 @@ def main():
         for i in range(gs.nbrKnights):
             placement = input(
                 'ou voulez vous placer vos placer vos chevaliers ? ( {} restant(s))\n'.format(gs.nbrKnights))
-            gs.get_board()[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.knightsNotation
+            gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.knightsNotation
             gs.nbrKnights -= 1
             gs.humansPieces -= 1
             gs.draw_board()
 
         for i in range(gs.nbrArchers):
             placement = input('ou voulez vous placer vos placer vos archers ? ( {} restant(s))\n'.format(gs.nbrArchers))
-            gs.get_board()[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.achersNotation
+            gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.achersNotation
             gs.nbrArchers -= 1
             gs.humansPieces -= 1
             gs.draw_board()
 
         for i in range(gs.nbrCata):
             placement = input('ou voulez vous placer vos placer vos catapultes ? ( {} restant(s))\n'.format(gs.nbrCata))
-            gs.get_board()[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.cataNotation
+            gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.cataNotation
             gs.nbrCata -= 1
             gs.humansPieces -= 1
             gs.draw_board()
@@ -91,21 +91,21 @@ def main():
     while gs.orcsPieces != 0:
         for i in range(gs.nbrOrcs):
             placement = input('ou voulez vous placer vos placer vos orcs ? ( {} restant(s))\n'.format(gs.nbrOrcs))
-            gs.get_board()[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.orcsNotation
+            gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.orcsNotation
             gs.nbrOrcs -= 1
             gs.orcsPieces -= 1
             gs.draw_board()
 
         for i in range(gs.nbrMages):
             placement = input('ou voulez vous placer vos placer vos mages ? ( {} restant(s))\n'.format(gs.nbrMages))
-            gs.get_board()[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.magesNotation
+            gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.magesNotation
             gs.nbrMages -= 1
             gs.orcsPieces -= 1
             gs.draw_board()
 
         for i in range(gs.nbrDrakes):
             placement = input('ou voulez vous placer vos placer vos dragons ? ( {} restant(s))\n'.format(gs.nbrDrakes))
-            gs.get_board()[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.drakesNotation
+            gs.board[gs.hor.index(placement[0])][gs.ver.index(placement[1:])] = gs.drakesNotation
             gs.nbrDrakes -= 1
             gs.orcsPieces -= 1
             gs.draw_board()
@@ -129,7 +129,7 @@ def main():
 
         pos = input('inserez les coordonnées d\'une case contenant l\'une de vos pièces \n')
 
-        while pos != 'ff' and gs.get_board()[gs.hor.index(pos[0])][gs.ver.index(pos[1:])] == '--':
+        while pos != 'ff' and gs.board[gs.hor.index(pos[0])][gs.ver.index(pos[1:])] == '--':
             pos = input('inserez les coordonnées correctes d\'une case contenant l\'une de vos pièce \n')
 
         if pos == 'ff':
@@ -143,14 +143,14 @@ def main():
         else:
             deplacement = input('ou voullez vous déplacer la pièce choisis ?\n')
 
-            gs.get_board()[gs.hor.index(deplacement[0])][gs.ver.index(deplacement[1:])] = \
-                gs.get_board()[gs.hor.index(pos[0])][
+            gs.board[gs.hor.index(deplacement[0])][gs.ver.index(deplacement[1:])] = \
+                gs.board[gs.hor.index(pos[0])][
                     gs.ver.index(pos[1:])]
 
-            gs.get_board()[gs.hor.index(pos[0])][gs.ver.index(pos[1:])] = '--'
+            gs.board[gs.hor.index(pos[0])][gs.ver.index(pos[1:])] = '--'
 
-        for x in range(len(gs.get_board())):
-            if len(set(gs.get_board()[x])) > 1:
+        for x in range(len(gs.board)):
+            if len(set(gs.board[x])) > 1:
                 break
             else:
                 q = 'quit'

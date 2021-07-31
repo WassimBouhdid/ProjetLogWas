@@ -23,6 +23,7 @@ def lineConsoleGame():
 
     print('l\'équipe des humains commence à déposer ses pièces')
 
+
     for v in range(1, a.get_nbrhuman):
         for x in range(1, h.get_nbrknights()):
             placement = input(
