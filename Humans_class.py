@@ -1,4 +1,7 @@
-class humains:
+import unittest as unit
+
+
+class Humans:
     def __init__(self, kng=4, arch=6, cata=2):
         self.__nbrknights = kng
         self.__nbrarch = arch
@@ -26,7 +29,7 @@ class humains:
 
     @get_nbrknights.setter
     def get_nbrknights(self, value):
-        self.__nbrknights= value
+        self.__nbrknights = value
 
     @get_nbrarch.setter
     def get_nbrarch(self, value):
@@ -47,3 +50,10 @@ class humains:
 
     def get_nota(self):
         return self.__nota
+
+
+class TestHuman(unit.TestCase):
+    def test_getnotation(self):
+        self.assertEqual(type(Humans().get_nota()), type([]))
+        for i in range(0, 3):
+            self.assertEqual(type(Humans().get_nota()[i]), type(""))

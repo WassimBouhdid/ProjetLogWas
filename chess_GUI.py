@@ -1,76 +1,138 @@
 import pygame as p
-from board import *
 
-B = Board()
+from board import Board
+from attackclass import Attack
+from Party_class import Party
+from move import Move
+
+moves = Move()
+attack = Attack()
 
 
 class GUI:
-    def __init__(self):
+    def __init__(self, dimension=12, width=720, height=720):
 
-        self.dim = 13
-        self.larg = 611
-        self.haut = 700
-        self.dimcar = int(611 // self.dim)
-        self.img = {}
-        self.maxfps = 15
-        self.running = ''
-        self.fen = p.display.set_mode((self.larg, self.haut))
+        self.__dim = dimension
+        self.__width = width
+        self.__height = height
+        self.__dimcar = int(self.__width // self.__dim)
+        self.__maxfps = 15
 
     def chargimg(self):
-        images = ["ar", "ca", "dr", "kn", "ma", "or", "og", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11',
-                  '12', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l']
-
+        images = ["ar", "ca", "dr", "kn", "ma", "or", "og"]
+        loadedimg = {}
         for image in images:
-            self.img[image] = p.transform.scale(p.image.load("images/" + image + ".png"), (self.dimcar, self.dimcar))
-
-    def desstatut(self, stat):
-        Board.dessplat(Board.fen)
-        Board.desspieces(Board.fen, stat)
+            loadedimg[image] = p.transform.scale(p.image.load("images/" + image + ".png"),
+                                                 (self.__dimcar, self.__dimcar))
+        return loadedimg
 
     def dessplat(self, screen):
         colors = [p.Color("white"), p.Color("gray")]
-        for i in range(self.dim):
-            for x in range(self.dim):
+        for i in range(self.__dim):
+            for x in range(self.__dim):
                 color = colors[((i + x) % 2)]
-                p.draw.rect(screen, color, p.Rect(i * self.dimcar, x * self.dimcar, self.dimcar, self.dimcar))
+                p.draw.rect(screen, color, p.Rect(i * self.__dimcar, x * self.__dimcar, self.__dimcar, self.__dimcar))
 
-    def desspieces(self, screen, board):
-        for i in range(self.dim):
-            for x in range(self.dim):
+    def desspieces(self, screen, board, img):
+        for i in range(self.__dim):
+            for x in range(self.__dim):
                 piece = board[x][i]
                 if piece != "--":
-                    screen.blit(self.img[piece], p.Rect(i * self.dimcar, x * self.dimcar, self.dimcar, self.dimcar))
+                    screen.blit(img[piece],
+                                p.Rect(i * self.__dimcar, x * self.__dimcar, self.__dimcar, self.__dimcar))
+
+    def desstatut(self, interface, screen, stat, img):
+        interface.dessplat(screen)
+        interface.desspieces(screen, stat, img)
 
     def lancement(self, status):
-        Board.fen.fill((30, 30, 0))
-        Board.chargimg()
-        font = p.font.Font(None, 32)
-        input_box = p.Rect(200, 650, 140, 32)
-        color_inactive = p.Color('lightskyblue3')
-        color_active = p.Color('dodgerblue2')
-        color = color_inactive
-        active = False
-        text = ''
-        done = False
-        input = ""
-        Board.running = True
-        while Board.running:
+        p.init()
+        clock = p.time.Clock()
+        interface = GUI()
+        window = p.display.set_mode((720, 720))
+        running = True
+        board = Board()
+        validmoves = moves.getallpossiblemoves(status)
+        validattacks = attack.getallpossibleattacks(status)
+        validemovemade = False
+        sqselected = ()
+        playerclicks = []
+
+        while running:
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    Board.running = False
-                if event.type == p.MOUSEBUTTONDOWN:
-                    if input_box.collidepoint(event.pos):
-                        active = not active
-                    else:
-                        active = False
-                    color = color_active if active else color_inactive
-                if event.type == p.KEYDOWN:
-                    if active:
-                        if event.key == p.K_RETURN:
-                            text = ""
-                        elif event.key == p.K_BACKSPACE:
-                            text = text[:-1]
-                        else:
-                            text += event.unicode
-                Board.desstatut(status)
-                p.display.flip()
+                    running = False
+
+                party = Party()
+                party.knightswin(status)
+
+                party.orcswin(status)
+                if not validemovemade:
+
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+
+                            selection = p.mouse.get_pos()
+                            row = selection[0] // self.__dimcar
+                            col = selection[1] // self.__dimcar
+                            if sqselected == (row, col):
+                                sqselected = ()
+                                playerclicks = []
+                            else:
+                                sqselected = (row, col)
+                                playerclicks.append(sqselected)
+                            if len(playerclicks) == 2:
+                                move = Move(playerclicks[0], playerclicks[1], status)
+                                if move in validmoves:
+                                    move.makemove(move, status)
+                                    validemovemade = True
+                                sqselected = ()
+                                playerclicks = []
+                elif validemovemade:
+
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            selection = p.mouse.get_pos()
+                            row = selection[0] // self.__dimcar
+                            col = selection[1] // self.__dimcar
+
+                            if sqselected == (row, col):
+                                sqselected = ()
+                                playerclicks = []
+                            else:
+                                sqselected = (row, col)
+                                playerclicks.append(sqselected)
+                            if len(playerclicks) == 2:
+                                validattacks = attack.getallpossibleattacks(status)
+                                attacks = Attack(playerclicks[0], playerclicks[1], status)
+                                if attacks in validattacks:
+                                    print("attaque réussie !")
+                                    attack.makeattacks(attacks, status)
+                                    validemovemade = False
+                                sqselected = ()
+                                playerclicks = []
+                            validmoves = moves.getallpossiblemoves(status)
+                            validattacks = attack.getallpossibleattacks(status)
+
+                party.knightswin(status)
+                party.orcswin(status)
+
+                if party.getorcwinner():
+                    print('les orcs ont gagné')
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 3:
+                            status = board.get_filledboard()
+                            validmoves = moves.getallpossiblemoves(status)
+                            validattacks = attack.getallpossibleattacks(status)
+
+                if party.getknightwinner():
+                    print('les chevalier ont gagné')
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 3:
+                            status = board.get_filledboard()
+                            validmoves = moves.getallpossiblemoves(status)
+                            validattacks = attack.getallpossibleattacks(status)
+
+            interface.desstatut(interface, window, status, interface.chargimg())
+            clock.tick(self.__maxfps)
+            p.display.flip()
