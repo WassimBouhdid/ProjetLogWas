@@ -1,3 +1,5 @@
+import unittest as unit
+
 class Humans:
     def __init__(self, kng=4, arch=6, cata=2):
         self.__nbrknights = kng
@@ -32,3 +34,5 @@ class Humans:
 
     def get_notaHuman(self, pos):
         return self.__nota[pos]
+
+

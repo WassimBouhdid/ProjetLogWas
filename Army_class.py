@@ -15,5 +15,6 @@ class Army:
 
 
 class Testarmy(unittest.TestCase):
-    def test_get_get_nbrhuman(self):
+    def test_get_nbrhuman(self):
         self.assertEqual(type(Army().get_nbrhuman), type(4))
+        self.assertEqual(Army().get_nbrhuman, 12)

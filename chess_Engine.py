@@ -11,6 +11,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.commandlign:
-        lineConsoleGame()
+        lineConsoleGame(B.get_filledboard())
     else:
         GUI().lancement(B.get_filledboard())

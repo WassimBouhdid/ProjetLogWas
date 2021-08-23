@@ -31,5 +31,5 @@ class Orcs:
     def kill_drake(self):
         self.__nbrdrakes -= 1
 
-    def get_notaOrcs(self, pos):
-        return self.__nota[pos]
+    def get_notaOrcs(self):
+        return self.__nota

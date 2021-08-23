@@ -1,11 +1,13 @@
 import pygame as p
 
-import unittest
-from moves import Moves
-import board
-from board import *
+from board import Board
+from attackclass import Attack
+from Party_class import Party
+from move import Move
 
-B = Board()
+moves = Move()
+attack = Attack()
+
 
 class GUI:
     def __init__(self, dimension=12, width=720, height=720):
@@ -18,11 +20,11 @@ class GUI:
 
     def chargimg(self):
         images = ["ar", "ca", "dr", "kn", "ma", "or", "og"]
-        Loadedimg = {}
+        loadedimg = {}
         for image in images:
-            Loadedimg[image] = p.transform.scale(p.image.load("images/" + image + ".png"),
+            loadedimg[image] = p.transform.scale(p.image.load("images/" + image + ".png"),
                                                  (self.__dimcar, self.__dimcar))
-        return Loadedimg
+        return loadedimg
 
     def dessplat(self, screen):
         colors = [p.Color("white"), p.Color("gray")]
@@ -49,28 +51,88 @@ class GUI:
         interface = GUI()
         window = p.display.set_mode((720, 720))
         running = True
+        board = Board()
+        validmoves = moves.getallpossiblemoves(status)
+        validattacks = attack.getallpossibleattacks(status)
+        validemovemade = False
         sqselected = ()
-        playerClicks = []
+        playerclicks = []
+
         while running:
             for event in p.event.get():
                 if event.type == p.QUIT:
                     running = False
-                if event.type == p.MOUSEBUTTONDOWN:
-                    selection = p.mouse.get_pos()
-                    row = selection[0] // self.__dimcar
-                    col = selection[1] // self.__dimcar
-                    if sqselected == (row, col):
-                        sqselected = ()
-                        playerClicks = []
-                    else:
-                        sqselected = (row, col)
-                        playerClicks.append(sqselected)
-                    if len(playerClicks) == 2:
-                        move = Moves(playerClicks[0], playerClicks[1], status)
-                        B.makemove(move, status)
-                        print(move.getpositionnotation())
-                        sqselected = ()
-                        playerClicks = []
+
+                party = Party()
+                party.knightswin(status)
+
+                party.orcswin(status)
+                if not validemovemade:
+
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+
+                            selection = p.mouse.get_pos()
+                            row = selection[0] // self.__dimcar
+                            col = selection[1] // self.__dimcar
+                            if sqselected == (row, col):
+                                sqselected = ()
+                                playerclicks = []
+                            else:
+                                sqselected = (row, col)
+                                playerclicks.append(sqselected)
+                            if len(playerclicks) == 2:
+                                move = Move(playerclicks[0], playerclicks[1], status)
+                                if move in validmoves:
+                                    move.makemove(move, status)
+                                    validemovemade = True
+                                sqselected = ()
+                                playerclicks = []
+                elif validemovemade:
+
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            selection = p.mouse.get_pos()
+                            row = selection[0] // self.__dimcar
+                            col = selection[1] // self.__dimcar
+
+                            if sqselected == (row, col):
+                                sqselected = ()
+                                playerclicks = []
+                            else:
+                                sqselected = (row, col)
+                                playerclicks.append(sqselected)
+                            if len(playerclicks) == 2:
+                                validattacks = attack.getallpossibleattacks(status)
+                                attacks = Attack(playerclicks[0], playerclicks[1], status)
+                                if attacks in validattacks:
+                                    print("attaque réussie !")
+                                    attack.makeattacks(attacks, status)
+                                    validemovemade = False
+                                sqselected = ()
+                                playerclicks = []
+                            validmoves = moves.getallpossiblemoves(status)
+                            validattacks = attack.getallpossibleattacks(status)
+
+                party.knightswin(status)
+                party.orcswin(status)
+
+                if party.getorcwinner():
+                    print('les orcs ont gagné')
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 3:
+                            status = board.get_filledboard()
+                            validmoves = moves.getallpossiblemoves(status)
+                            validattacks = attack.getallpossibleattacks(status)
+
+                if party.getknightwinner():
+                    print('les chevalier ont gagné')
+                    if event.type == p.MOUSEBUTTONDOWN:
+                        if event.button == 3:
+                            status = board.get_filledboard()
+                            validmoves = moves.getallpossiblemoves(status)
+                            validattacks = attack.getallpossibleattacks(status)
+
             interface.desstatut(interface, window, status, interface.chargimg())
             clock.tick(self.__maxfps)
             p.display.flip()
